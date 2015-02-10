@@ -8,6 +8,7 @@ import com.Acrobot.ChestShop.Permission;
 import com.Acrobot.ChestShop.Signs.ChestShopSign;
 import com.Acrobot.ChestShop.Utils.uBlock;
 import com.google.common.collect.Lists;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -24,6 +25,7 @@ import org.bukkit.material.Directional;
 import org.bukkit.material.PistonBaseMaterial;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import us.talabrek.ultimateskyblock.uSkyBlock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,7 +133,7 @@ public class SignBreak implements Listener {
                 continue;
             }
 
-            if (Properties.TURN_OFF_SIGN_PROTECTION || canDestroyShop(breaker, sign.getLine(NAME_LINE))) {
+            if (Properties.TURN_OFF_SIGN_PROTECTION || canDestroyShop(breaker, sign.getLine(NAME_LINE), block.getLocation())) {
                 brokenBlocks.add(sign);
             } else {
                 canBeBroken = false;
@@ -149,8 +151,11 @@ public class SignBreak implements Listener {
         return true;
     }
 
-    private static boolean canDestroyShop(Player player, String name) {
-        return player != null && (hasShopBreakingPermission(player) || canUseName(player, name));
+    private static boolean canDestroyShop(Player player, String name, Location location) {
+        if(player != null && uSkyBlock.getInstance().hasIsland(player.getName()) && uSkyBlock.getInstance().locationIsOnIsland(player, location)) {
+            return true;
+        }
+        return (hasShopBreakingPermission(player) || canUseName(player, name));
     }
 
     private static boolean hasShopBreakingPermission(Player player) {
